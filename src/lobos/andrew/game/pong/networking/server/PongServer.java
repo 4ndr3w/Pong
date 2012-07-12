@@ -19,6 +19,9 @@ public class PongServer {
 		System.out.println("Waiting for player 2...");
 		player2 = new PlayerHandler(server.accept());
 		
+		player1.setOpponent(player2);
+		player2.setOpponent(player1);
+		
 		System.out.println("Starting game");
 	}
 	
@@ -26,11 +29,9 @@ public class PongServer {
 	{
 		while ( true )
 		{
-			player1.send(player2);
-			player2.send(player1);
-			//System.out.println("Player 1 at "+player1.getFloat("yPos")+" player 2 at "+player2.getFloat("yPos"));
+			System.out.println("Player 1 at "+player1.getString("yPos")+" player 2 at "+player2.getString("yPos"));
 			try {
-				Thread.sleep(50);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

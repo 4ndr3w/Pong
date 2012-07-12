@@ -1,12 +1,8 @@
 package lobos.andrew.game.pong.networking.server;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -17,19 +13,23 @@ public class PlayerHandler extends PlayerTable implements Runnable  {
 	Thread thread;
 	ObjectInputStream reader;
 	ObjectOutputStream writer;
+	PlayerHandler opponent = null;
 	public PlayerHandler(Socket s)
 	{
 		socket = s;
-		System.out.println("recv");
 		try {
 			writer = new ObjectOutputStream(socket.getOutputStream());
 			reader = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("run");
 		thread = new Thread(this);
 		thread.start();
+	}
+	
+	public void setOpponent(PlayerHandler o)
+	{
+		opponent = o;
 	}
 	
 	public void send(PlayerTable table)
@@ -37,7 +37,7 @@ public class PlayerHandler extends PlayerTable implements Runnable  {
 		try {
 			writer.writeObject(table.getHashMap());
 		} catch (IOException e) {
-			System.out.println("Something Broke!");
+			System.exit(0);
 			e.printStackTrace();
 		}
 	}
@@ -47,7 +47,9 @@ public class PlayerHandler extends PlayerTable implements Runnable  {
 		while (true)
 		{
 			try {
-				map = (HashMap<String,Object>) reader.readObject();
+				mix((HashMap<String,Object>) reader.readObject());
+				if ( opponent != null )
+					send(opponent);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

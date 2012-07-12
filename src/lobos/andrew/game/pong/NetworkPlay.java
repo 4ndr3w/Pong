@@ -20,10 +20,11 @@ public class NetworkPlay extends Scene {
 	float xRate = 0.005f;
 	ServerLink networking;
 	PlayerTable myTable = new PlayerTable();
+	PlayerTable opponentTable = new PlayerTable();
 	public NetworkPlay()
 	{
 		System.out.println("Waiting for opponent...");
-		networking = new ServerLink(myTable);
+		networking = new ServerLink();
 		System.out.println("Play!");
 		setBackgroundColor(Color.BLACK);
 		ball.setFill(true);
@@ -35,7 +36,7 @@ public class NetworkPlay extends Scene {
 		addObject(player2);
 		
 		setCharacter(player1);
-
+		networking.update(myTable, opponentTable);
 		ball.applyForce(new Force(xRate, yRate));
 	}
 	
@@ -58,9 +59,9 @@ public class NetworkPlay extends Scene {
 	public void sceneLogic() {
 		//networking.send(player1.getY());
 		myTable.put("yPos", "hello");
-		System.out.println("got "+networking.getOpponentTable().getString("yPos"));
-		player2.setLocation(player2.getX(), networking.getOpponentTable().getFloat("yPos"));
-		
+		System.out.println("got "+opponentTable.getString("yPos"));
+		//player2.setLocation(player2.getX(), networking.getOpponentTable().getFloat("yPos"));
+		networking.update(myTable, opponentTable);
 		if ( player1.isTouching(ball) )
 		{
 			System.out.println("Player1 hit");

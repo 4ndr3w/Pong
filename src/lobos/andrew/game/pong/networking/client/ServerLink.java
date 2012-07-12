@@ -5,8 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Map;
-
+import java.util.HashMap;
 import lobos.andrew.game.networking.PlayerTable;
 
 public class ServerLink extends Thread
@@ -14,14 +13,9 @@ public class ServerLink extends Thread
 	Socket socket;
 	ObjectInputStream inStream;
 	ObjectOutputStream outStream;
-	
-	PlayerTable myTable, opponentTable;
 
-	public ServerLink(PlayerTable _myTable)
-	{
-		myTable = _myTable;
-		opponentTable = new PlayerTable();
-		
+	public ServerLink()
+	{	
 		try {
 			socket = new Socket("127.0.0.1", 1218);
 			outStream = new ObjectOutputStream(socket.getOutputStream());
@@ -34,26 +28,18 @@ public class ServerLink extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("waiting for read");
-		opponentTable.updateMapFromReader(inStream);
-		System.out.println("done");
 		start();
 	}
 	
-	public PlayerTable getOpponentTable()
+	public void update(PlayerTable myTable, PlayerTable opponentTable)
 	{
-		return opponentTable;
-	}
-	
-	public void run()
-	{
-		while ( true )
-		{
 			try {
 				outStream.writeObject(myTable.getHashMap());
-				
-				Map<String,Object> got = (Map<String, Object>) inStream.readObject();
-				opponentTable.getHashMap().putAll(got);
+				System.out.println("Waiting for response...");
+				@SuppressWarnings("unchecked")
+				HashMap<String,Object> got = (HashMap<String, Object>) inStream.readObject();
+				opponentTable.mix(got);
+				System.out.println("Got response");
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -68,7 +54,6 @@ public class ServerLink extends Thread
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 	}
 	
 }
