@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import lobos.andrew.game.baseObjects.Circle;
+import lobos.andrew.game.networking.PlayerTable;
 import lobos.andrew.game.physics.Force;
+import lobos.andrew.game.pong.networking.client.ServerLink;
 import lobos.andrew.game.pong.objects.Player;
 import lobos.andrew.game.scene.Scene;
 
@@ -16,9 +18,13 @@ public class NetworkPlay extends Scene {
 	
 	float yRate = 0.008f;
 	float xRate = 0.005f;
-	//PongComm networking = new PongComm();
+	ServerLink networking;
+	PlayerTable myTable = new PlayerTable();
 	public NetworkPlay()
 	{
+		System.out.println("Waiting for opponent...");
+		networking = new ServerLink(myTable);
+		System.out.println("Play!");
 		setBackgroundColor(Color.BLACK);
 		ball.setFill(true);
 		ball.setColor(Color.GREEN);
@@ -51,8 +57,9 @@ public class NetworkPlay extends Scene {
 	@Override
 	public void sceneLogic() {
 		//networking.send(player1.getY());
-		
-		//player2.setLocation(player2.getX(), networking.getY());
+		myTable.put("yPos", "hello");
+		System.out.println("got "+networking.getOpponentTable().getString("yPos"));
+		player2.setLocation(player2.getX(), networking.getOpponentTable().getFloat("yPos"));
 		
 		if ( player1.isTouching(ball) )
 		{

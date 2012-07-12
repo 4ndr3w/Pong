@@ -46,7 +46,7 @@ public class LocalPlay extends Scene {
 		addObject(player2ScoreT);
 		
 		setCharacter(player1);
-
+		
 		ball.applyForce(new Force(xRate, yRate));
 	}
 	
