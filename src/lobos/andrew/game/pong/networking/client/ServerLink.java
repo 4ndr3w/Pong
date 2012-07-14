@@ -1,26 +1,49 @@
 package lobos.andrew.game.pong.networking.client;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import lobos.andrew.game.networking.PlayerTable;
 
-public class ServerLink extends Thread
+public class ServerLink
 {
 	Socket socket;
-	ObjectInputStream inStream;
-	ObjectOutputStream outStream;
-
-	public ServerLink()
+	
+	NetworkLinkReader reader;
+	NetworkLinkWriter writer;
+	
+	PlayerTable myTable = new PlayerTable();
+	PlayerTable opponentTable = new PlayerTable();
+	public ServerLink(boolean isServer)
 	{	
 		try {
-			socket = new Socket("127.0.0.1", 1218);
-			outStream = new ObjectOutputStream(socket.getOutputStream());
-			inStream = new ObjectInputStream(socket.getInputStream());
-
+			if ( isServer )
+			{
+				ServerSocket sServer = new ServerSocket(1218);
+				System.out.println("waiting for accept...");
+				socket = sServer.accept();
+				System.out.println("got client!");
+			}
+			else 
+			{
+				socket = new Socket("127.0.0.1", 1218);
+				if ( socket.isConnected() )
+					System.out.println("connect success");
+			}
+			reader = new NetworkLinkReader(opponentTable, socket);
+			writer = new NetworkLinkWriter(myTable, socket);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -28,32 +51,15 @@ public class ServerLink extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		start();
 	}
 	
-	public void update(PlayerTable myTable, PlayerTable opponentTable)
+	public PlayerTable getMyTable()
 	{
-			try {
-				outStream.writeObject(myTable.getHashMap());
-				System.out.println("Waiting for response...");
-				@SuppressWarnings("unchecked")
-				HashMap<String,Object> got = (HashMap<String, Object>) inStream.readObject();
-				opponentTable.mix(got);
-				System.out.println("Got response");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		return myTable;
 	}
 	
+	public PlayerTable getOpponentTable()
+	{
+		return opponentTable;
+	}
 }

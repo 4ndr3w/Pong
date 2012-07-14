@@ -8,28 +8,28 @@ import lobos.andrew.game.baseObjects.Text;
 import lobos.andrew.game.core.Renderer;
 import lobos.andrew.game.scene.Scene;
 
-public class Menu extends Scene
-{
+public class MultiplayerMenu extends Scene {
+
 	Text bigText = new Text(new Font("SansSerif", Font.BOLD, 48), -0.4f, 0.19f);
 	
-	Text startSingleplayerGameOption = new Text(new Font("SansSerif", Font.BOLD, 12), -0.399f, 0.15f);
-	Text startMultiplayerGameOption = new Text(new Font("SansSerif", Font.PLAIN, 12), -0.399f, 0.125f);
+	Text runAsClientOption = new Text(new Font("SansSerif", Font.BOLD, 12), -0.399f, 0.15f);
+	Text runAsServerOption = new Text(new Font("SansSerif", Font.PLAIN, 12), -0.399f, 0.125f);
 	Text exitOption = new Text(new Font("SansSerif", Font.PLAIN, 12), -0.399f, 0.1f);
 	
 	int selected = 0;
 	
-	public Menu()
+	public MultiplayerMenu()
 	{
-		startSingleplayerGameOption.setColor(Color.GREEN);
-		startSingleplayerGameOption.setText("Play Local");
-		addObject(startSingleplayerGameOption);
+		runAsClientOption.setColor(Color.GREEN);
+		runAsClientOption.setText("Connect to server");
+		addObject(runAsClientOption);
 		
-		startMultiplayerGameOption.setColor(Color.GREEN);
-		startMultiplayerGameOption.setText("Play Online");
-		addObject(startMultiplayerGameOption);
+		runAsServerOption.setColor(Color.GREEN);
+		runAsServerOption.setText("Start server");
+		addObject(runAsServerOption);
 		
 		exitOption.setColor(Color.GREEN);
-		exitOption.setText("Exit");
+		exitOption.setText("Back");
 		addObject(exitOption);
 		
 		bigText.setText("Pong");
@@ -49,13 +49,13 @@ public class Menu extends Scene
 			switch ( selected )
 			{
 				case 0:
-					Renderer.getInstance().setScene(new LocalPlay());
+					Renderer.getInstance().setScene(new NetworkPlay(false));
 					break;
 				case 1:
-					Renderer.getInstance().setScene(new MultiplayerMenu());
+					Renderer.getInstance().setScene(new NetworkPlay(true));
 					break;
 				case 2:
-					System.exit(0);
+					Renderer.getInstance().setScene(new Menu());
 					break;
 			}
 		}
@@ -77,18 +77,18 @@ public class Menu extends Scene
 		switch ( selected )
 		{
 		case 0:
-			startSingleplayerGameOption.setFont(new Font("SansSerif", Font.BOLD, 12));
-			startMultiplayerGameOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
+			runAsClientOption.setFont(new Font("SansSerif", Font.BOLD, 12));
+			runAsServerOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
 			exitOption.setFont(new Font("SansSerif", Font.PLAIN, 12));	
 			break;
 		case 1:
-			startSingleplayerGameOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
-			startMultiplayerGameOption.setFont(new Font("SansSerif", Font.BOLD, 12));
+			runAsClientOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
+			runAsServerOption.setFont(new Font("SansSerif", Font.BOLD, 12));
 			exitOption.setFont(new Font("SansSerif", Font.PLAIN, 12));	
 			break;
 		case 2:
-			startSingleplayerGameOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
-			startMultiplayerGameOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
+			runAsClientOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
+			runAsServerOption.setFont(new Font("SansSerif", Font.PLAIN, 12));
 			exitOption.setFont(new Font("SansSerif", Font.BOLD, 12));	
 			break;
 		}
@@ -99,5 +99,5 @@ public class Menu extends Scene
 		
 		
 	}
-	
+
 }

@@ -50,10 +50,14 @@ public class PlayerHandler extends PlayerTable implements Runnable  {
 				mix((HashMap<String,Object>) reader.readObject());
 				if ( opponent != null )
 					send(opponent);
+				Thread.sleep(100);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
