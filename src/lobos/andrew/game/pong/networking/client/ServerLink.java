@@ -1,20 +1,9 @@
 package lobos.andrew.game.pong.networking.client;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import lobos.andrew.game.networking.PlayerTable;
 
 public class ServerLink
@@ -24,10 +13,12 @@ public class ServerLink
 	NetworkLinkReader reader;
 	NetworkLinkWriter writer;
 	
-	PlayerTable myTable = new PlayerTable();
-	PlayerTable opponentTable = new PlayerTable();
+	boolean isServer = false;
+
 	public ServerLink(boolean isServer)
 	{	
+		this.isServer = isServer;
+		
 		try {
 			if ( isServer )
 			{
@@ -42,8 +33,8 @@ public class ServerLink
 				if ( socket.isConnected() )
 					System.out.println("connect success");
 			}
-			reader = new NetworkLinkReader(opponentTable, socket);
-			writer = new NetworkLinkWriter(myTable, socket);
+			reader = new NetworkLinkReader(socket);
+			writer = new NetworkLinkWriter(socket);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,11 +46,16 @@ public class ServerLink
 	
 	public PlayerTable getMyTable()
 	{
-		return myTable;
+		return writer.getTable();
 	}
 	
 	public PlayerTable getOpponentTable()
 	{
-		return opponentTable;
+		return reader.getTable();
+	}
+	
+	public boolean isServer()
+	{
+		return isServer;
 	}
 }

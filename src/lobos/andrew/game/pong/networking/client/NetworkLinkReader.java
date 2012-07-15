@@ -10,14 +10,18 @@ import lobos.andrew.game.networking.PlayerTable;
 
 public class NetworkLinkReader extends Thread {
 	Socket server;
-	PlayerTable opponentTable;
+	PlayerTable table = new PlayerTable();
 	BufferedReader reader;
-	public NetworkLinkReader(PlayerTable opponentTable, Socket server) throws IOException
+	public NetworkLinkReader(Socket server) throws IOException
 	{
 		this.server = server;
-		this.opponentTable = opponentTable;
 		reader = new BufferedReader(new InputStreamReader(server.getInputStream()));
 		start();
+	}
+	
+	public PlayerTable getTable()
+	{
+		return table;
 	}
 	
 	public void run()
@@ -25,24 +29,15 @@ public class NetworkLinkReader extends Thread {
 		while ( true )
 		{
 			try {
-				HashMap<String,Object> tmp = new HashMap<String,Object>();
-				while ( true )
+				//System.out.println("waiting for line...");
+				String line = reader.readLine();
+				if ( line != null )
 				{
-					System.out.println("waiting for line...");
-					String line = reader.readLine();
-					System.out.println("got data: "+line);
-					if ( line != null )
-					{
-						String[] input = reader.readLine().split(":");
-						System.out.println("Got data: "+input[0]+":"+input[1]+":"+input[2]);
-						if ( input[0].equals("e") )
-							break;
-						else if ( input[0].equals("w") )
-							tmp.put(input[1], input[2]);
-					}
-					else System.out.println("Got null string from socket!");
+					String[] input = reader.readLine().split(":");
+					table.put(input[0], input[1]);
+					//System.out.println("Added "+input[0]+" with value "+input[1]);
 				}
-				opponentTable.mix(tmp);
+				else System.out.println("Got null string from socket!");
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

@@ -10,12 +10,11 @@ import lobos.andrew.game.networking.PlayerTable;
 
 public class NetworkLinkWriter extends Thread {
 	Socket client;
-	PlayerTable myTable;
+	PlayerTable table = new PlayerTable();
 	BufferedWriter writer;
-	public NetworkLinkWriter(PlayerTable myTable, Socket client) throws IOException
+	public NetworkLinkWriter(Socket client) throws IOException
 	{
 		this.client = client;
-		this.myTable = myTable;
 		writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 		start();
 	}
@@ -25,15 +24,15 @@ public class NetworkLinkWriter extends Thread {
 		while ( true )
 		{
 			try {
-				Iterator<String> keys = myTable.getHashMap().keySet().iterator();
+				Iterator<String> keys = table.getHashMap().keySet().iterator();
 				while ( keys.hasNext() )
 				{
 					String thisKey = keys.next();
-					writer.write("w:"+thisKey+":"+myTable.getHashMap().get(thisKey)+"\n");
+					writer.write(thisKey+":"+table.getHashMap().get(thisKey)+"\n");
 				}
-				writer.write("e:e:e\n");
+				writer.flush();
 				
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -42,6 +41,11 @@ public class NetworkLinkWriter extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public PlayerTable getTable()
+	{
+		return table;
 	}
 	
 }

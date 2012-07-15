@@ -33,7 +33,8 @@ public class NetworkPlay extends Scene {
 		addObject(player1);
 		addObject(player2);
 		
-		setCharacter(player1);
+		setCharacter( ( isServer ? player1 : player2 ) );
+		
 		networking.getMyTable().put("yPos", "init");
 		ball.applyForce(new Force(xRate, yRate));
 	}
@@ -43,23 +44,24 @@ public class NetworkPlay extends Scene {
 	{
 		super.keyPressed(event);
 		
-		if ( event.getKeyChar() == 'i' )
-			player2.moveUp();
-		else if ( event.getKeyChar() == 'k' )
-			player2.moveDown();
-		
 		if ( event.getKeyChar() == 'g' )
 			System.out.println("Ball is at ("+ball.getX()+", "+ball.getY()+")");
 	}
 	
 	
 	@Override
-	public void sceneLogic() {
-		//networking.send(player1.getY());
-		
-		networking.getMyTable().put("yPos", "hello2");
-		//System.out.println("got "+networking.getOpponentTable().getString("yPos"));
-		//player2.setLocation(player2.getX(), networking.getOpponentTable().getFloat("yPos"));
+	public void sceneLogic() 
+	{
+		if ( networking.isServer() )
+		{
+			networking.getMyTable().put("yPos", player1.getY());
+			player2.setLocation(player2.getX(), networking.getOpponentTable().getFloat("yPos"));
+		}
+		else
+		{
+			networking.getMyTable().put("yPos", player2.getY());
+			player1.setLocation(player1.getX(), networking.getOpponentTable().getFloat("yPos"));
+		}
 
 		if ( player1.isTouching(ball) )
 		{
