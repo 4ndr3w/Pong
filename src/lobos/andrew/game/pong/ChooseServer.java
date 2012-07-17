@@ -47,7 +47,7 @@ public class ChooseServer extends Scene
 				serverAddr.setText( str.substring(0, str.length()-1) );
 		}
 		else if ( event.getKeyCode() > 33 && event.getKeyCode() <= 90 )
-			serverAddr.setText(serverAddr.getText()+KeyEvent.getKeyText(event.getKeyCode()));
+			serverAddr.setText(serverAddr.getText()+event.getKeyChar());
 	}
 	
 	@Override
