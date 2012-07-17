@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.HashMap;
-
 import lobos.andrew.game.networking.PlayerTable;
 
 public class NetworkLinkReader extends Thread {
@@ -38,10 +36,7 @@ public class NetworkLinkReader extends Thread {
 					//System.out.println("Added "+input[0]+" with value "+input[1]);
 				}
 				else System.out.println("Got null string from socket!");
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//Thread.sleep(100);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -32,11 +32,11 @@ public class NetworkLinkWriter extends Thread {
 				}
 				writer.flush();
 				
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
+				Thread.sleep(5);
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

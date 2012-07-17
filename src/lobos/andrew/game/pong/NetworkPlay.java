@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import lobos.andrew.game.baseObjects.Circle;
-import lobos.andrew.game.networking.PlayerTable;
 import lobos.andrew.game.physics.Force;
 import lobos.andrew.game.pong.networking.client.ServerLink;
 import lobos.andrew.game.pong.objects.Player;
@@ -62,29 +61,40 @@ public class NetworkPlay extends Scene {
 			networking.getMyTable().put("yPos", player2.getY());
 			player1.setLocation(player1.getX(), networking.getOpponentTable().getFloat("yPos"));
 		}
-
-		if ( player1.isTouching(ball) )
-		{
-			System.out.println("Player1 hit");
-			ball.applyForce(new Force(-ball.getForce().getX(), ball.getForce().getY()));
-		}
-		else if ( player2.isTouching(ball) )
-		{
-			System.out.println("Player2 hit");
-			ball.applyForce(new Force(-ball.getForce().getX(), ball.getForce().getY()));
-		}
 		
-		if ( ball.getY() > 1.0 )
+		if ( networking.isServer() )
 		{
-			ball.setLocation(ball.getX(), 1.0f);
-			ball.applyForce(new Force(ball.getForce().getX(), -ball.getForce().getY()));
+			if ( player1.isTouching(ball) )
+			{
+				System.out.println("Player1 hit");
+				ball.applyForce(new Force(-ball.getForce().getX(), ball.getForce().getY()));
+			}
+			else if ( player2.isTouching(ball) )
+			{
+				System.out.println("Player2 hit");
+				ball.applyForce(new Force(-ball.getForce().getX(), ball.getForce().getY()));
+			}
+
+			if ( ball.getY() > 1.0 )
+			{
+				ball.setLocation(ball.getX(), 1.0f);
+				ball.applyForce(new Force(ball.getForce().getX(), -ball.getForce().getY()));
+			}
+			else if ( ball.getY() < -1.0 )
+			{
+				ball.setLocation(ball.getX(),-1.0f);
+				ball.applyForce(new Force(ball.getForce().getX(), -ball.getForce().getY()));
+			}
+			else if ( ball.isOutOfBounds() )
+				ball.setLocation(0, 0);
+			networking.getMyTable().put("ballY", ball.getY());
+			networking.getMyTable().put("ballX", ball.getX());
 		}
-		else if ( ball.getY() < -1.0 )
+		else
 		{
-			ball.setLocation(ball.getX(),-1.0f);
-			ball.applyForce(new Force(ball.getForce().getX(), -ball.getForce().getY()));
+			float x = networking.getOpponentTable().getFloat("ballX");
+			float y = networking.getOpponentTable().getFloat("ballY");
+			ball.setLocation(x, y);
 		}
-		else if ( ball.isOutOfBounds() )
-			ball.setLocation(0, 0);
 	}
 }
