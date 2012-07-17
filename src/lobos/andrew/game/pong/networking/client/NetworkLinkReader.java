@@ -50,4 +50,8 @@ public class NetworkLinkReader extends Thread {
 			}
 		}
 	}
+
+	public void disconnect() {
+		running = false;
+	}
 }

@@ -69,4 +69,16 @@ public class ServerLink
 	{
 		return isServer;
 	}
+
+	public void disconnect() {
+		
+		try {
+			reader.disconnect();
+			writer.disconnect();
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

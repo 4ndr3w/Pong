@@ -47,5 +47,9 @@ public class NetworkLinkWriter extends Thread {
 	{
 		return table;
 	}
+
+	public void disconnect() {
+		running = false;
+	}
 	
 }

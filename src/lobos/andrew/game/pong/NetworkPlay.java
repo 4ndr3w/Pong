@@ -10,6 +10,7 @@ import javax.media.opengl.GLAutoDrawable;
 
 import lobos.andrew.game.baseObjects.Circle;
 import lobos.andrew.game.baseObjects.Text;
+import lobos.andrew.game.core.Renderer;
 import lobos.andrew.game.physics.Force;
 import lobos.andrew.game.pong.networking.client.ServerLink;
 import lobos.andrew.game.pong.objects.Player;
@@ -81,6 +82,11 @@ public class NetworkPlay extends Scene implements Runnable {
 		
 		if ( event.getKeyChar() == 'g' )
 			System.out.println("Ball is at ("+ball.getX()+", "+ball.getY()+")");
+		else if ( event.getKeyCode() == 27 )
+		{
+			networking.disconnect();
+			Renderer.getInstance().setScene(new Menu());
+		}
 	}
 	
 	public void render(GL gl, GLAutoDrawable renderable)
