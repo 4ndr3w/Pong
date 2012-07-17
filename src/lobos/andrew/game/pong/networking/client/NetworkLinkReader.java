@@ -4,12 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+
+import lobos.andrew.game.core.Renderer;
 import lobos.andrew.game.networking.PlayerTable;
+import lobos.andrew.game.pong.Menu;
 
 public class NetworkLinkReader extends Thread {
 	Socket server;
 	PlayerTable table = new PlayerTable();
 	BufferedReader reader;
+	boolean running = true;
 	public NetworkLinkReader(Socket server) throws IOException
 	{
 		this.server = server;
@@ -24,21 +28,24 @@ public class NetworkLinkReader extends Thread {
 	
 	public void run()
 	{
-		while ( true )
+		while ( running )
 		{
 			try {
-				//System.out.println("waiting for line...");
 				String line = reader.readLine();
 				if ( line != null )
 				{
 					String[] input = reader.readLine().split(":");
 					table.put(input[0], input[1]);
-					//System.out.println("Added "+input[0]+" with value "+input[1]);
 				}
-				else System.out.println("Got null string from socket!");
-				//Thread.sleep(100);
+				else
+				{
+					running = false;
+					Renderer.getInstance().setScene(new Menu());
+					System.out.println("Got null string from socket!");
+				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				running = false;
+				Renderer.getInstance().setScene(new Menu());
 				e.printStackTrace();
 			}
 		}

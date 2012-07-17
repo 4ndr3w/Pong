@@ -6,12 +6,15 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Iterator;
 
+import lobos.andrew.game.core.Renderer;
 import lobos.andrew.game.networking.PlayerTable;
+import lobos.andrew.game.pong.Menu;
 
 public class NetworkLinkWriter extends Thread {
 	Socket client;
 	PlayerTable table = new PlayerTable();
 	BufferedWriter writer;
+	boolean running = true;
 	public NetworkLinkWriter(Socket client) throws IOException
 	{
 		this.client = client;
@@ -21,7 +24,7 @@ public class NetworkLinkWriter extends Thread {
 	
 	public void run()
 	{
-		while ( true )
+		while ( running )
 		{
 			try {
 				Iterator<String> keys = table.getHashMap().keySet().iterator();
@@ -33,12 +36,9 @@ public class NetworkLinkWriter extends Thread {
 				writer.flush();
 				
 				Thread.sleep(5);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Throwable e) {
+				running = false;
+				Renderer.getInstance().setScene(new Menu());
 			}
 		}
 	}

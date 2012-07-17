@@ -3,6 +3,7 @@ package lobos.andrew.game.pong;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.net.InetAddress;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -25,10 +26,12 @@ public class NetworkPlay extends Scene implements Runnable {
 	float yRate = 0.008f;
 	float xRate = 0.005f;
 	ServerLink networking = null;
+	InetAddress connectToAddr = null;
 	boolean isServer;
-	public NetworkPlay(boolean isServer)
+	
+	public NetworkPlay() // Server constructor
 	{
-		this.isServer = isServer;
+		isServer = true;
 		
 		waitingText.setColor(Color.GREEN);
 		waitingText.setText("Waiting for partner...");
@@ -47,6 +50,29 @@ public class NetworkPlay extends Scene implements Runnable {
 		ball.applyForce(new Force(xRate, yRate));
 		new Thread(this).start();
 	}
+	
+	public NetworkPlay(InetAddress serverAddr) // Client constructor
+	{
+		isServer = false;
+		connectToAddr = serverAddr;
+		waitingText.setColor(Color.GREEN);
+		waitingText.setText("Waiting for partner...");
+		
+		setBackgroundColor(Color.BLACK);
+		ball.setFill(true);
+		ball.setColor(Color.GREEN);
+		
+		addObject(ball);
+		
+		addObject(player1);
+		addObject(player2);
+		
+		setCharacter( ( isServer ? player1 : player2 ) );
+
+		ball.applyForce(new Force(xRate, yRate));
+		new Thread(this).start();
+	}
+	
 	
 	@Override
 	public void keyPressed(KeyEvent event) 
@@ -117,6 +143,9 @@ public class NetworkPlay extends Scene implements Runnable {
 
 	@Override
 	public void run() {
-		networking = new ServerLink(isServer);
+		if ( connectToAddr == null )
+			networking = new ServerLink();
+		else
+			networking = new ServerLink(connectToAddr);
 	}
 }

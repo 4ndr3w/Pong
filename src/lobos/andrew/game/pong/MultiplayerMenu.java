@@ -49,10 +49,10 @@ public class MultiplayerMenu extends Scene {
 			switch ( selected )
 			{
 				case 0:
-					Renderer.getInstance().setScene(new NetworkPlay(false));
+					Renderer.getInstance().setScene(new ChooseServer());
 					break;
 				case 1:
-					Renderer.getInstance().setScene(new NetworkPlay(true));
+					Renderer.getInstance().setScene(new NetworkPlay());
 					break;
 				case 2:
 					Renderer.getInstance().setScene(new Menu());

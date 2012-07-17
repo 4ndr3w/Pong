@@ -1,6 +1,7 @@
 package lobos.andrew.game.pong.networking.client;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -15,7 +16,7 @@ public class ServerLink
 	
 	boolean isServer = false;
 
-	public ServerLink(boolean isServer)
+	public ServerLink(boolean isServer, InetAddress serverAddr)
 	{	
 		this.isServer = isServer;
 		
@@ -29,7 +30,7 @@ public class ServerLink
 			}
 			else 
 			{
-				socket = new Socket("127.0.0.1", 1218);
+				socket = new Socket(serverAddr, 1218);
 				if ( socket.isConnected() )
 					System.out.println("connect success");
 			}
@@ -42,6 +43,16 @@ public class ServerLink
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public ServerLink() // Start as server
+	{
+		this(true, null);
+	}
+	
+	public ServerLink(InetAddress serverAddr) // Start as server
+	{
+		this(false, serverAddr);
 	}
 	
 	public PlayerTable getMyTable()
