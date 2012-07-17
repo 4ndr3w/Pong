@@ -1,28 +1,38 @@
 package lobos.andrew.game.pong;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+
 import lobos.andrew.game.baseObjects.Circle;
+import lobos.andrew.game.baseObjects.Text;
 import lobos.andrew.game.physics.Force;
 import lobos.andrew.game.pong.networking.client.ServerLink;
 import lobos.andrew.game.pong.objects.Player;
 import lobos.andrew.game.scene.Scene;
 
-public class NetworkPlay extends Scene {
+public class NetworkPlay extends Scene implements Runnable {
 	Player player1 = new Player(-0.8f, 0);
 	Player player2 = new Player(0.8f, 0);
 	
 	Circle ball = new Circle(0.02f, 0, 0);
 	
+	Text waitingText = new Text(new Font("SansSerif", Font.BOLD, 48), -0.3f, 0);
+	
 	float yRate = 0.008f;
 	float xRate = 0.005f;
-	ServerLink networking;
+	ServerLink networking = null;
+	boolean isServer;
 	public NetworkPlay(boolean isServer)
 	{
-		System.out.println("Waiting for opponent...");
-		networking = new ServerLink(isServer);
-		System.out.println("Play!");
+		this.isServer = isServer;
+		
+		waitingText.setColor(Color.GREEN);
+		waitingText.setText("Waiting for partner...");
+		
 		setBackgroundColor(Color.BLACK);
 		ball.setFill(true);
 		ball.setColor(Color.GREEN);
@@ -33,9 +43,9 @@ public class NetworkPlay extends Scene {
 		addObject(player2);
 		
 		setCharacter( ( isServer ? player1 : player2 ) );
-		
-		networking.getMyTable().put("yPos", "init");
+
 		ball.applyForce(new Force(xRate, yRate));
+		new Thread(this).start();
 	}
 	
 	@Override
@@ -47,6 +57,13 @@ public class NetworkPlay extends Scene {
 			System.out.println("Ball is at ("+ball.getX()+", "+ball.getY()+")");
 	}
 	
+	public void render(GL gl, GLAutoDrawable renderable)
+	{
+		if ( networking != null )
+			super.render(gl, renderable);
+		else waitingText.render(gl, renderable);
+			
+	}
 	
 	@Override
 	public void sceneLogic() 
@@ -96,5 +113,10 @@ public class NetworkPlay extends Scene {
 			float y = networking.getOpponentTable().getFloat("ballY");
 			ball.setLocation(x, y);
 		}
+	}
+
+	@Override
+	public void run() {
+		networking = new ServerLink(isServer);
 	}
 }
